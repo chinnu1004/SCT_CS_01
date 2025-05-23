@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Caesar Cipher Encrypt ➝ Decrypt</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      padding: 40px 30px;
+      border-radius: 15px;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    h1 {
+      text-align: center;
+      color: #4e54c8;
+      margin-bottom: 25px;
+    }
+
+    label {
+      font-weight: 600;
+      margin-top: 15px;
+      display: block;
+      color: #333;
+    }
+
+    textarea, input {
+      width: 100%;
+      padding: 12px;
+      margin-top: 8px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+      resize: none;
+    }
+
+    input[type="number"] {
+      -moz-appearance: textfield;
+    }
+
+    button {
+      margin-top: 25px;
+      width: 100%;
+      padding: 14px;
+      background-color: #4e54c8;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #3b3fad;
+    }
+
+    .result-box {
+      margin-top: 20px;
+      padding: 15px;
+      background: #f4f6ff;
+      border-radius: 8px;
+      font-size: 1rem;
+      color: #333;
+      white-space: pre-wrap;
+    }
+
+    .result-title {
+      font-weight: 600;
+      color: #4e54c8;
+      margin-bottom: 6px;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 25px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Caesar Cipher Tool</h1>
+
+    <label for="message">🔤 Enter Message:</label>
+    <textarea id="message" rows="4" placeholder="Type your message..."></textarea>
+
+    <label for="shift">🔑 Enter Shift Key (0–25):</label>
+    <input type="number" id="shift" placeholder="e.g. 3" min="0" max="25" />
+
+    <button onclick="processCipher()">🔄 Encrypt ➝ Decrypt</button>
+
+    <div class="result-box" id="encryptedResult">
+      <div class="result-title">🔐 Encrypted:</div>
+      <div id="encryptedText"></div>
+    </div>
+
+    <div class="result-box" id="decryptedResult">
+      <div class="result-title">🔓 Decrypted:</div>
+      <div id="decryptedText"></div>
+    </div>
+  </div>
+
+  <script>
+    function normalizeShift(shift) {
+      return ((shift % 26) + 26) % 26;
+    }
+
+    function shiftChar(char, shift, encrypt = true) {
+      if (!/[a-zA-Z]/.test(char)) return char;
+      const base = char === char.toUpperCase() ? 65 : 97;
+      const offset = char.charCodeAt(0) - base;
+      const newOffset = encrypt
+        ? (offset + shift) % 26
+        : (offset - shift + 26) % 26;
+      return String.fromCharCode(base + newOffset);
+    }
+
+    function caesarCipher(text, shift, encrypt = true) {
+      shift = normalizeShift(shift);
+      let result = '';
+      for (const char of text) {
+        result += shiftChar(char, shift, encrypt);
+      }
+      return result;
+    }
+
+    function processCipher() {
+      const message = document.getElementById("message").value;
+      const shift = parseInt(document.getElementById("shift").value);
+      const encTextBox = document.getElementById("encryptedText");
+      const decTextBox = document.getElementById("decryptedText");
+
+      if (!message || isNaN(shift)) {
+        alert("⚠️ Please enter both message and shift key.");
+        return;
+      }
+
+      // Step 1: Encrypt
+      const encrypted = caesarCipher(message, shift, true);
+      encTextBox.textContent = encrypted;
+
+      // Step 2: Decrypt (to validate)
+      const decrypted = caesarCipher(encrypted, shift, false);
+      decTextBox.textContent = decrypted;
+    }
+  </script>
+</body>
+</html>
